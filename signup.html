@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Bookmarks</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="auth-title">Create account</span>
+    </div>
+    <p class="auth-subtitle">Sign up to start saving and syncing bookmarks.</p>
+    <div id="alert"></div>
+    <form id="signup-form">
+      <div class="form-field">
+        <label class="form-label" for="signup-username">Username</label>
+        <input class="form-input" type="text" id="signup-username" name="username" required placeholder="yourname">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="signup-email">Email</label>
+        <input class="form-input" type="email" id="signup-email" name="email" required placeholder="you@example.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="signup-password">Password</label>
+        <div class="password-wrapper">
+          <input class="form-input password-input" type="password" id="signup-password" name="password" required placeholder="At least 8 chars incl. special">
+          <button type="button" class="toggle-btn" data-target="signup-password">Show</button>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="signup-confirm">Confirm Password</label>
+        <div class="password-wrapper">
+          <input class="form-input password-input" type="password" id="signup-confirm" name="confirm" required placeholder="Re-enter password">
+          <button type="button" class="toggle-btn" data-target="signup-confirm">Show</button>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a class="link-btn" href="login.html">Have an account?</a>
+        <button class="primary-btn" type="submit">Sign up</button>
+      </div>
+    </form>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>
+

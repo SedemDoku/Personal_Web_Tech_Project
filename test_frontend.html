@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing API Endpoints</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        async function testAPI() {
+            results.innerHTML = '<p>Testing Collections API...</p>';
+            
+            try {
+                const response = await fetch('/Personal_Web_Tech_Project/api/collections.php', {
+                    credentials: 'include'
+                });
+                
+                results.innerHTML += `<p>Collections Status: ${response.status}</p>`;
+                const text = await response.text();
+                results.innerHTML += `<pre>Collections Response: ${text}</pre>`;
+                
+            } catch (error) {
+                results.innerHTML += `<p style="color:red">Error: ${error.message}</p>`;
+            }
+            
+            try {
+                const response2 = await fetch('/Personal_Web_Tech_Project/api/bookmarks.php', {
+                    credentials: 'include'
+                });
+                
+                results.innerHTML += `<p>Bookmarks Status: ${response2.status}</p>`;
+                const text2 = await response2.text();
+                results.innerHTML += `<pre>Bookmarks Response: ${text2}</pre>`;
+                
+            } catch (error) {
+                results.innerHTML += `<p style="color:red">Error: ${error.message}</p>`;
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

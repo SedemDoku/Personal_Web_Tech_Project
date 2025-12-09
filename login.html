@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Bookmarks</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="auth-title">Welcome back</span>
+    </div>
+    <p class="auth-subtitle">Log in to access your bookmarks.</p>
+    <div id="alert"></div>
+    <form id="login-form">
+      <div class="form-field">
+        <label class="form-label" for="login-email">Email</label>
+        <input class="form-input" type="email" id="login-email" name="email" required placeholder="you@example.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="login-password">Password</label>
+        <div class="password-wrapper">
+          <input class="form-input password-input" type="password" id="login-password" name="password" required placeholder="At least 8 chars incl. special">
+          <button type="button" class="toggle-btn" data-target="login-password">Show</button>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a class="link-btn" href="signup.html">Create account</a>
+        <button class="primary-btn" type="submit">Log in</button>
+      </div>
+    </form>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>
+
