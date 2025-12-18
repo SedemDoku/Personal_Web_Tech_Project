@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function saveItem(newItem) {
   // Get API URL and user info from storage
   const result = await chrome.storage.local.get({ 
-    apiUrl: 'http://localhost/Personal_Web_Tech_Project/api',
+    apiUrl: 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/api',
     user_id: null,
     user_email: null
   });

@@ -1,8 +1,8 @@
 <?php
 // Database setup script
-$host = 'localhost';
-$user = 'root';
-$pass = '';
+$host = '169.239.251.102:341';
+$user = 'sedem.doku';
+$pass = 'Nana Yaa';
 
 try {
     // Connect without database first

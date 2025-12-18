@@ -4,7 +4,7 @@
 // Use browser namespace (works in both Firefox and Chrome with polyfill)
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 
-const DEFAULT_API_BASE = 'http://localhost/Personal_Web_Tech_Project/api';
+const DEFAULT_API_BASE = 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/api';
 
 let currentUser = null;
 let bookmarks = [];
@@ -56,7 +56,7 @@ function wireEvents() {
   
   signupLink?.addEventListener('click', (e) => {
     e.preventDefault();
-    browserAPI.tabs.create({ url: 'http://localhost/Personal_Web_Tech_Project/signup.html' });
+    browserAPI.tabs.create({ url: 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/signup.html' });
   });
 }
 

@@ -1,9 +1,10 @@
 <?php
 // Database configuration - Use environment variables in production
+// Default to local MySQL (adjust DB_* env vars on the server if different)
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'bookmark_db');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_NAME', getenv('DB_NAME') ?: 'webtech_2025A_sedem_doku');
+define('DB_USER', getenv('DB_USER') ?: 'sedem.doku');
+define('DB_PASS', getenv('DB_PASS') ?: 'Nana Yaa');
 
 // Security configuration
 define('ALLOWED_ORIGINS', ['http://169.239.251.102:341', 'http://localhost', 'http://127.0.0.1']);
@@ -44,7 +45,13 @@ function getDB() {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
-            die("Database connection failed. Please check your configuration.");
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'error' => 'Database connection failed. Please check your configuration.'
+            ]);
+            exit;
         }
     }
     return $pdo;

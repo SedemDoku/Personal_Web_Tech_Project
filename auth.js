@@ -1,5 +1,11 @@
 // Authentication with PHP backend
-const API_BASE = '/Personal_Web_Tech_Project/api';
+// Compute API base relative to current page so it works under subfolders (e.g. /~user/app)
+const API_BASE = (() => {
+  const parts = window.location.pathname.split('/');
+  parts.pop(); // drop the current file name
+  const base = parts.join('/') || '';
+  return `${base}/api`;
+})();
 const USER_STORAGE_KEY = 'appUser';
 
 function saveUserSession(user) {

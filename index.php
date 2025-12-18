@@ -207,7 +207,13 @@
     </div>
 
     <script>
-        const API_BASE = '/Personal_Web_Tech_Project/api';
+        // Resolve API base relative to this page so deployments under subfolders (e.g. /~user/app) work
+        const API_BASE = (() => {
+            const parts = window.location.pathname.split('/');
+            parts.pop(); // drop current file
+            const base = parts.join('/') || '';
+            return `${base}/api`;
+        })();
     </script>
     <script src="cookies.js"></script>
     <script src="app.js"></script>
