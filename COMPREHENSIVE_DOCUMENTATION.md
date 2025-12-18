@@ -1,9 +1,6 @@
 # Comprehensive System Documentation
 ## Personal Web Tech Project - Bookmark Manager
 
-**Version:** 1.0  
-**Last Updated:** 2024  
-**Author:** System Documentation
 
 ---
 
@@ -35,13 +32,12 @@ A comprehensive bookmark management system inspired by Raindrop.io, allowing use
 
 ### Key Features
 - **Multi-User Support**: Secure user authentication with isolated data
-- **Multiple Content Types**: Links, text, images, audio, and video
-- **Media Download**: Automatic download of media files from URLs (Google Drive, email attachments, etc.)
+- **Multiple Content Types**: Links, text, images, audio, and video (via external URLs)
+- **Media URLs & Embeds**: Save external media links (YouTube, images) without server-side downloads
 - **Collections System**: Hierarchical organization with nested collections
 - **Tagging System**: Flexible tagging for categorization
 - **Search Functionality**: Full-text search across bookmarks
 - **Browser Extension**: Quick save functionality via context menu
-- **Media Deduplication**: Efficient storage by reusing downloaded media files
 - **Responsive UI**: Modern, clean interface with grid/list views
 
 ### Technology Stack
@@ -49,7 +45,7 @@ A comprehensive bookmark management system inspired by Raindrop.io, allowing use
 - **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
 - **Database**: MySQL 5.7+ / MariaDB
 - **Extension**: Chrome Extension Manifest V3
-- **Storage**: File system for media files, MySQL for metadata
+- **Storage**: MySQL for metadata; external URLs for media
 
 ---
 
@@ -500,17 +496,8 @@ Create a new bookmark.
 }
 ```
 
-**Request (Multipart Form Data):**
-For file uploads (audio/video):
-- `title`: Bookmark title
-- `type`: "audio" or "video"
-- `media_file`: File upload
-- `collection_id`: Optional collection ID
-- `tags`: Comma-separated tags
-
-**Special Handling:**
-- **Audio/Video URLs**: If `type` is "audio" or "video" and `content` is a URL, the system automatically downloads the file
-- **File Uploads**: Multipart form data with `media_file` field triggers file upload handler
+**Note on Media:**
+In the current state, media is provided as external URLs (e.g., YouTube links, direct image links). No server-side file uploads are available. Specify the external URL in the `content` field.
 
 **Response:**
 ```json
@@ -529,10 +516,9 @@ For file uploads (audio/video):
 1. Validate required fields (title)
 2. Validate type (link, text, image, audio, video)
 3. Handle media URL download if applicable
-4. Handle file upload if applicable
-5. Insert bookmark
-6. Create/link tags
-7. Return complete bookmark data
+4. Insert bookmark
+5. Create/link tags
+6. Return complete bookmark data
 
 #### PUT `/api/bookmarks.php?id={id}`
 
@@ -573,8 +559,6 @@ Delete a bookmark.
   "message": "Bookmark deleted successfully"
 }
 ```
-
-**Note:** Media files are NOT automatically deleted. Consider implementing cleanup cron job.
 
 ### Collections API (`/api/collections.php`)
 
@@ -703,64 +687,15 @@ Server-side media downloads/uploads are disabled. The application stores media a
 
 #### Automatic URL Download
 
-When a bookmark is created with:
-- Type: `audio` or `video`
-- Content: HTTP/HTTPS URL
-
-**Process:**
-1. Validate URL format
-2. Check for existing download (deduplication)
-3. Make HEAD request to get Content-Type
-4. Determine file extension from URL or Content-Type
-5. Download file using cURL
-6. Validate file (size, MIME type, type match)
-7. Save to `uploads/media/{userId}_{timestamp}_{hash}.{ext}`
-8. Store relative path in database
-
-**Function:** `downloadMediaFromUrl($url, $userId, $type, $pageUrl)`
-
-#### Deduplication
-
-**Process:**
-1. Check database for existing bookmark with same URL and type
-2. If found and file exists:
-   - Create hard link (if possible) or copy
-   - Use new user-specific filename
-   - Return existing file path
-3. If not found, proceed with download
-
-**Benefits:**
-- Reduces storage usage
-- Faster for subsequent users
-- Maintains user-specific access control
+**DISABLED** - Not available in this state.
 
 #### File Upload
 
-For direct file uploads (multipart form data):
-
-**Process:**
-1. Validate file (size, extension, MIME type)
-2. Sanitize filename
-3. Move uploaded file to `uploads/media/`
-4. Return relative path
-
-**Function:** `uploadMediaFile($file, $userId, $type)`
+**DISABLED** - Server-side file uploads are not available. Provide media via external URLs (e.g., YouTube, direct image links).
 
 ### Validation Rules
 
-**File Size:**
-- Maximum: 50MB (configurable via `MAX_FILE_SIZE`)
-
-**File Extensions:**
-- Whitelist: `mp3`, `wav`, `webm`, `mp4`, `mov`, `avi`, `m4a`, `flac`
-
-**MIME Types:**
-- Whitelist: Only allowed media MIME types
-- Verification: Uses `finfo_file()` to detect actual file type (prevents spoofing)
-
-**Type Matching:**
-- Audio files must have `audio/*` MIME type
-- Video files must have `video/*` MIME type
+**Note:** File validation is not applicable in the current state. Media is provided as external URLs.
 
 ### Storage Location
 
@@ -1087,13 +1022,6 @@ Creates right-click menu items:
    - Content Security Policy headers
    - Input sanitization
 
-3. **File Upload Security:**
-   - File extension whitelist
-   - MIME type verification (actual file content)
-   - File size limits
-   - Filename sanitization
-   - Directory traversal prevention (`basename()`)
-
 ### Access Control
 
 1. **User Isolation:**
@@ -1101,13 +1029,7 @@ Creates right-click menu items:
    - Foreign key constraints ensure data integrity
    - Ownership verification on all operations
 
-2. **Media File Access:**
-   - User ID embedded in filename
-   - Ownership verification before serving
-   - Database verification (file must exist in user's bookmarks)
-   - MIME type whitelist
-
-3. **CORS Protection:**
+2. **CORS Protection:**
    - Origin whitelist
    - Credentials required
    - Preflight request handling
@@ -1149,8 +1071,7 @@ Personal_Web_Tech_Project/
 ├── api/                          # API Endpoints
 │   ├── auth.php                  # Authentication API
 │   ├── bookmarks.php            # Bookmarks CRUD API
-│   ├── collections.php           # Collections API
-│   └── media.php                 # Media file serving
+│   └── collections.php           # Collections API
 │
 ├── WebExtention/                 # Chrome Extension
 │   ├── manifest.json             # Extension manifest
@@ -1159,8 +1080,6 @@ Personal_Web_Tech_Project/
 │   ├── popup.html                # Extension popup
 │   ├── popup.js                  # Popup logic
 │   └── bookmark-ribbon-icon.png  # Extension icon
-│
-├── uploads/                      # (unused for media in current state)
 │
 ├── config.php                    # Configuration & utilities
 ├── index.php                     # Main application page
@@ -1182,10 +1101,8 @@ Personal_Web_Tech_Project/
 ├── README.md                     # Basic documentation
 ├── CONFIGURATION.md              # Configuration guide
 ├── QUICK_START.md                # Quick start guide
-├── SECURITY.md                   # Security documentation
-├── SECURITY_FIXES.md             # Security fixes log
-├── MEDIA_UPLOAD_SETUP.md        # Media upload setup
-└── IMPLEMENTATION_COMPLETE.md   # Implementation notes
+├── COMPREHENSIVE_DOCUMENTATION.md # This file
+└── SECURITY.md                   # Security documentation
 ```
 
 ---
@@ -1244,23 +1161,6 @@ php -S localhost:8000
 
 Access: `http://localhost:8000`
 
-### Upload Directory Setup
-
-1. **Create Directory:**
-```bash
-mkdir -p uploads/media
-```
-
-2. **Set Permissions:**
-```bash
-chmod 755 uploads
-chmod 755 uploads/media
-```
-
-**Windows:**
-- Right-click folder → Properties → Security
-- Grant "Modify" to web server user (IIS_IUSRS or Apache user)
-
 ### Extension Setup
 
 1. **Open Chrome Extensions:**
@@ -1288,10 +1188,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 define('ALLOWED_ORIGINS', ['http://localhost', 'http://127.0.0.1']);
-define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 50MB
-define('UPLOAD_DIR', dirname(__DIR__) . '/uploads/media/');
-define('ALLOWED_MEDIA_TYPES', [...]);
-define('ALLOWED_MEDIA_EXTENSIONS', [...]);
+// Media file configuration is not used (URL-only media mode)
 ```
 
 #### Extension Configuration
@@ -1391,11 +1288,9 @@ Change to your server URL if different.
 
 **Audio/Video:**
 ```
-1. Bookmark with audio/video type displays player
-2. Player uses api/media.php endpoint
-3. Authentication via URL parameters
-4. File served with proper MIME type
-5. Browser native controls
+1. Bookmark displays appropriate preview (image, YouTube embed, etc.)
+2. Media rendered directly from external URL
+3. Browser native controls
 ```
 
 ### Extension Workflow
@@ -1417,7 +1312,7 @@ Change to your server URL if different.
 1. Right-click on page element
 2. Select "Save highlighted text" / "Save this image" / etc.
 3. Modal appears on page
-4. Edit metadata
+4. Edit metadata (or paste external media URL)
 5. Click "Save"
 6. Bookmark saved to server
 7. Success message shown
@@ -1444,58 +1339,9 @@ Change to your server URL if different.
 
 ## Technical Details
 
-### Media Download Implementation
+### Media Handling (URL-Only)
 
-#### URL Detection
-
-```php
-if (($type === 'audio' || $type === 'video') && !empty($content)) {
-    if (filter_var($content, FILTER_VALIDATE_URL) && 
-        (strpos($content, 'http://') === 0 || strpos($content, 'https://') === 0)) {
-        // Download media file
-    }
-}
-```
-
-#### Download Process
-
-1. **HEAD Request:**
-   - Get Content-Type header
-   - Verify URL is accessible
-   - Determine file extension
-
-2. **Download:**
-   - Use cURL with file handle
-   - Stream directly to file
-   - 5-minute timeout
-   - Follow redirects (max 5)
-
-3. **Validation:**
-   - Check file size
-   - Verify MIME type
-   - Verify type matches (audio/video)
-   - Clean up on failure
-
-4. **Storage:**
-   - Generate unique filename
-   - Save to uploads/media/
-   - Store path in database
-
-### Deduplication Algorithm
-
-```php
-// Check for existing download
-$stmt = $db->prepare("SELECT content FROM bookmarks 
-                      WHERE type = ? AND url = ? 
-                      AND content LIKE 'uploads/media/%' LIMIT 1");
-$stmt->execute([$type, $url]);
-$existingBookmark = $stmt->fetch();
-
-if ($existingBookmark && file_exists($existingFilepath)) {
-    // Create hard link or copy
-    link($existingFilepath, $newFilepath) || copy($existingFilepath, $newFilepath);
-}
-```
+Media is handled entirely on the client side using external URLs. No server-side download or file storage is performed.
 
 ### Authentication Flow
 
@@ -1579,8 +1425,6 @@ function setCORSHeaders() {
 
 **Solutions:**
 - Check CORS headers are set
-- Verify `api/media.php` is accessible
-- Check file permissions on `uploads/media/`
 - Verify user authentication headers/parameters
 - Check browser console for specific errors
 
@@ -1598,20 +1442,7 @@ function setCORSHeaders() {
 - Check browser console for errors
 - Verify CORS settings allow extension origin
 
-#### 4. File Upload Fails
-
-**Symptoms:**
-- "Failed to save file" error
-- Files not appearing in uploads/media/
-
-**Solutions:**
-- Check `uploads/media/` directory exists
-- Verify directory permissions (755)
-- Check file size (max 50MB)
-- Verify file type is allowed
-- Check PHP `upload_max_filesize` and `post_max_size`
-
-#### 5. Authentication Issues
+#### 4. Authentication Issues
 
 **Symptoms:**
 - "Authentication required" errors
@@ -1623,7 +1454,7 @@ function setCORSHeaders() {
 - Check localStorage/chrome.storage has user data
 - Clear storage and re-login
 
-#### 6. Search Not Working
+#### 5. Search Not Working
 
 **Symptoms:**
 - Search returns no results
@@ -1687,13 +1518,15 @@ ini_set('display_errors', 1);
 
 ## Conclusion
 
-This documentation provides a comprehensive overview of the Personal Web Tech Project bookmark management system. The system is designed with security, scalability, and user experience in mind, supporting multiple content types, hierarchical organization, and seamless browser integration.
+This documentation provides a comprehensive overview of the Personal Web Tech Project bookmark management system. The system is designed with security, scalability, and user experience in mind, supporting multiple content types via external URLs, hierarchical organization, and seamless browser integration.
+
+**Important:** This version of the system operates in URL-only media mode. Server-side media uploads, downloads, and file serving are disabled. All media is referenced and rendered using external URLs (e.g., YouTube, direct image links).
 
 For additional support or questions, refer to the individual component documentation files or check the code comments for implementation details.
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** 2024  
+**Document Version:** 1.0 (Updated for URL-only Media Mode)  
+**Last Updated:** December 18, 2025  
 **Maintained By:** Development Team
 

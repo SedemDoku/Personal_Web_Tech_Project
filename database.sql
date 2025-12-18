@@ -1,6 +1,6 @@
 -- Bookmark Manager Database Schema
 -- Run this in phpMyAdmin to set up the database
--- Note: Database name is bookmark_db (already created on school server)
+-- Note: Database name is bookmark_db when run locally (already created on school server)
 CREATE DATABASE IF NOT EXISTS bookmark_db;
 USE bookmark_db;
 
