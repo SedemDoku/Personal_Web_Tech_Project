@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="cookies.css">
     <!-- PreviewBox link previews -->
     <script src="https://cdn.jsdelivr.net/npm/@mariusbongarts/previewbox/dist/index.min.js"></script>
+    <!-- GoJS Library for Canvas View -->
+    <script src="https://unpkg.com/gojs@3.0.2/release/go.js"></script>
 </head>
 <body>
 
@@ -104,11 +106,84 @@
                                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
                             </svg>
                         </button>
+                        <button class="view-btn" data-view="canvas" title="Canvas view">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <section class="bookmark-grid" id="bookmark-grid"></section>
+            <!-- Canvas View -->
+            <div id="canvas-container" style="display: none;">
+                <div class="canvas-toolbar">
+                    <div class="canvas-toolbar-group">
+                        <button class="canvas-btn" id="canvas-zoom-in" title="Zoom In">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="11" y1="8" x2="11" y2="14"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                        <button class="canvas-btn" id="canvas-zoom-out" title="Zoom Out">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                        <button class="canvas-btn" id="canvas-reset-zoom" title="Reset Zoom">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="canvas-toolbar-group">
+                        <button class="canvas-btn" id="canvas-auto-layout" title="Auto Layout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Auto Layout
+                        </button>
+                        <button class="canvas-btn canvas-btn-primary" id="canvas-save" title="Save Canvas">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Save
+                        </button>
+                    </div>
+                    <div class="canvas-toolbar-group" style="margin-left:auto">
+                        <span id="canvas-status" class="canvas-status">Ready</span>
+                    </div>
+                </div>
+                <div id="canvas-diagram" style="width: 100%; height: calc(100vh - 280px); background-color: #f8f9fa; border: 1px solid var(--border); border-radius: var(--radius);"></div>
+                <div class="canvas-instructions">
+                    <span class="canvas-instruction-item">
+                        <strong>Drag</strong> bookmarks to position
+                    </span>
+                    <span class="canvas-instruction-separator">•</span>
+                    <span class="canvas-instruction-item">
+                        <strong>Right-click and drag</strong> between nodes to connect
+                    </span>
+                    <span class="canvas-instruction-separator">•</span>
+                    <span class="canvas-instruction-item">
+                        <strong>Click Save</strong> to persist changes
+                    </span>
+                </div>
+            </div>
             <div class="empty-state" id="empty-state" style="display: none;">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
@@ -217,6 +292,7 @@
     </script>
     <script src="cookies.js"></script>
     <script src="app.js"></script>
+    <script src="canvas.js"></script>
 </body>
 </html>
 

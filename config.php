@@ -2,9 +2,9 @@
 // Database configuration - Use environment variables in production
 // Default to local MySQL (adjust DB_* env vars on the server if different)
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'webtech_2025A_sedem_doku');
-define('DB_USER', getenv('DB_USER') ?: 'sedem.doku');
-define('DB_PASS', getenv('DB_PASS') ?: 'Nana Yaa');
+define('DB_NAME', getenv('DB_NAME') ?: 'bookmark_db');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // Security configuration
 define('ALLOWED_ORIGINS', ['http://169.239.251.102:341', 'http://localhost', 'http://127.0.0.1']);

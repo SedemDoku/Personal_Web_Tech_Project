@@ -217,6 +217,16 @@ function renderCollections() {
       li.classList.add('active');
       state.collectionId = collection.id;
       state.collectionName = collection.name;
+      
+      // Explicitly hide canvas and switch to grid view
+      const canvasContainer = document.getElementById('canvas-container');
+      const gridViewBtn = document.querySelector('.view-btn[data-view="grid"]');
+      
+      canvasContainer.style.display = 'none';
+      if (gridViewBtn && !gridViewBtn.classList.contains('active')) {
+        gridViewBtn.click();
+      }
+      
       loadBookmarks().then(() => render());
     });
     
@@ -242,6 +252,16 @@ function wireEvents() {
       state.collectionId = collectionId === '' || collectionId === 'unsorted' ? null : collectionId;
       state.collectionName = item.textContent.trim().split(' ')[0];
       state.tag = null;
+      
+      // Explicitly hide canvas and switch to grid view
+      const canvasContainer = document.getElementById('canvas-container');
+      const gridViewBtn = document.querySelector('.view-btn[data-view="grid"]');
+      
+      canvasContainer.style.display = 'none';
+      if (gridViewBtn && !gridViewBtn.classList.contains('active')) {
+        gridViewBtn.click();
+      }
+      
       loadBookmarks().then(() => render());
     });
   });
@@ -304,19 +324,46 @@ function wireEvents() {
   viewButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const view = btn.dataset.view;
+      
       viewButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       
-      if (view === 'list') {
-        bookmarkGrid.classList.add('list-view');
-        document.querySelectorAll('.bookmark-card').forEach(card => {
-          card.classList.add('list-view');
-        });
+      const canvasContainer = document.getElementById('canvas-container');
+      const bookmarkGrid = document.getElementById('bookmark-grid');
+      const emptyState = document.getElementById('empty-state');
+      
+      if (view === 'canvas') {
+        // Show canvas view
+        bookmarkGrid.style.display = 'none';
+        emptyState.style.display = 'none';
+        canvasContainer.style.display = 'flex';
+        
+        // Initialize diagram if not already done
+        if (window.canvasController) {
+          if (!window.canvasController.isInitialized()) {
+            window.canvasController.initCanvas();
+          }
+          // Always reload canvas data (will fetch fresh data if collection changed)
+          window.canvasController.loadCanvasData();
+        } else {
+          console.error('Canvas controller not loaded - make sure canvas.js is included');
+        }
       } else {
-        bookmarkGrid.classList.remove('list-view');
-        document.querySelectorAll('.bookmark-card').forEach(card => {
-          card.classList.remove('list-view');
-        });
+        // Show grid or list view
+        canvasContainer.style.display = 'none';
+        bookmarkGrid.style.display = view === 'list' ? 'block' : 'grid';
+        
+        if (view === 'list') {
+          bookmarkGrid.classList.add('list-view');
+          document.querySelectorAll('.bookmark-card').forEach(card => {
+            card.classList.add('list-view');
+          });
+        } else {
+          bookmarkGrid.classList.remove('list-view');
+          document.querySelectorAll('.bookmark-card').forEach(card => {
+            card.classList.remove('list-view');
+          });
+        }
       }
     });
   });

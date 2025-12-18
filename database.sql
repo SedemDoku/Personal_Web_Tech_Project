@@ -75,6 +75,39 @@ CREATE TABLE IF NOT EXISTS bookmark_tags (
     INDEX idx_tag_id (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Canvas positions table for storing bookmark positions on canvas
+CREATE TABLE IF NOT EXISTS bookmark_canvas_positions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bookmark_id INT NOT NULL,
+    collection_id INT NULL,
+    x_position DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    y_position DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_bookmark_collection (bookmark_id, collection_id),
+    FOREIGN KEY (bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE,
+    FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE CASCADE,
+    INDEX idx_bookmark_id (bookmark_id),
+    INDEX idx_collection_id (collection_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Canvas connections table for storing arrows between bookmarks
+CREATE TABLE IF NOT EXISTS bookmark_canvas_connections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_bookmark_id INT NOT NULL,
+    to_bookmark_id INT NOT NULL,
+    collection_id INT NULL,
+    label VARCHAR(255) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (from_bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE,
+    FOREIGN KEY (to_bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE,
+    FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE CASCADE,
+    INDEX idx_from_bookmark (from_bookmark_id),
+    INDEX idx_to_bookmark (to_bookmark_id),
+    INDEX idx_collection_id (collection_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Insert default collections for new users (will be created programmatically)
 -- This is just a reference structure
 
