@@ -1,22 +1,37 @@
 # Bookmark Manager - Full Stack Web Application
 
-A Raindrop.io-inspired bookmark manager built with PHP, MySQL, and vanilla JavaScript. Features a complete web application with user authentication, media URL/embedding support (no server-side downloads), and browser extensions for Chrome and Firefox.
+A modern, dark-themed bookmark manager with visual canvas organization. Built with PHP, MySQL, GoJS, and vanilla JavaScript. Features a sleek homepage, user authentication, and browser extensions for Chrome and Firefox.
 
 ## 🚀 Features
 
 ### Core Functionality
-- ✅ **User Authentication** - Secure signup/login with password validation and session management
-- ✅ **Bookmark Management** - Full CRUD operations for bookmarks
+- ✅ **Modern Homepage** - Raycast-inspired dark theme landing page with animated backgrounds
+- ✅ **User Authentication** - Secure signup/login with dark-themed UI and session management
+- ✅ **Visual Canvas Mode** - GoJS-powered interactive canvas for spatial bookmark organization
+- ✅ **Bookmark Management** - Full CRUD operations with media preview support
 - ✅ **Collections/Categories** - Nested collection support with hierarchical organization
 - ✅ **Tags System** - Tag-based bookmark organization
 - ✅ **Search & Filter** - Advanced search functionality across bookmarks
-- ✅ **Media URLs & Embeds** - Save and preview external media (YouTube, images) without server downloads
+- ✅ **Media Previews** - View images, videos (YouTube), and text content inline
 - ✅ **Multiple Bookmark Types** - Link, text, image, audio, and video bookmarks
+
+### Canvas Features
+- ✅ **Drag & Drop** - Freely position bookmarks anywhere on an infinite canvas
+- ✅ **Visual Connections** - Draw arrows between related bookmarks
+- ✅ **Auto-Save** - Canvas layout automatically persists to database
+- ✅ **Media Icons** - Visual indicators (🎥🖼️📝🎵) for different bookmark types
+- ✅ **Click to Preview** - Open media modals directly from canvas nodes
 
 ### Browser Extensions
 - ✅ **Chrome Extension** - Quick bookmark saving via context menu
 - ✅ **Firefox Extension** - Full Firefox support with WebExtensions API
 - ✅ **Extension Features** - Login, view bookmarks, delete, and save from any webpage
+
+### Design & UX
+- ✅ **Dark Theme** - Consistent dark color scheme across all pages (#0a0a0a background)
+- ✅ **Animated UI** - Floating shapes, gradient text, smooth transitions
+- ✅ **Responsive Design** - Works seamlessly on desktop and mobile
+- ✅ **Logo Branding** - Custom logo.png integrated throughout
 
 ### Security Features
 - ✅ **CORS Protection** - Whitelist-based origin control
@@ -72,7 +87,7 @@ The application supports environment variables for enhanced security:
 
 2. Start Apache and MySQL services
 
-3. Access at: `http://localhost/Personal_Web_Tech_Project/`
+3. Access at: `http://localhost/Personal_Web_Tech_Project/` (redirects to home.html)
 
 #### Option B: PHP Built-in Server
 
@@ -81,7 +96,7 @@ cd c:\xampp\htdocs\Personal_Web_Tech_Project
 php -S localhost:8000
 ```
 
-Access at: `http://localhost:8000`
+Access at: `http://localhost:8000` (redirects to home.html)
 
 ### 4. Browser Extension Setup
 
@@ -104,9 +119,13 @@ Access at: `http://localhost:8000`
 
 ### 6. First Use
 
-1. Navigate to `login.html` or `signup.html`
-2. Create an account (password requirements: 8+ chars, must include special character)
-3. Log in and start managing bookmarks!
+1. Navigate to the homepage at `http://localhost/Personal_Web_Tech_Project/` or `home.html`
+2. Click "Sign Up" to create an account (password requirements: 8+ chars, must include special character)
+3. Log in with your credentials
+4. Click "Go to Dashboard" to start managing bookmarks
+5. Use the grid view for traditional bookmark browsing
+6. Click the canvas button (in collection view) for visual organization mode
+7. Drag bookmarks around the canvas and draw connections between them!
 
 ## 📁 Project Structure
 
@@ -116,7 +135,7 @@ Personal_Web_Tech_Project/
 │   ├── auth.php           # Authentication endpoints (signup, login, logout)
 │   ├── bookmarks.php      # Bookmark CRUD
 │   ├── collections.php    # Collection management
-│   └── (media.php removed) # No server-side media serving
+│   └── canvas.php         # Canvas positions and connections
 ├── WebExtention/          # Chrome extension
 │   ├── background.js      # Background service worker
 │   ├── content.js         # Content script
@@ -130,19 +149,21 @@ Personal_Web_Tech_Project/
 │   ├── popup.html         # Extension popup UI
 │   ├── popup.js           # Popup logic
 │   └── manifest.json      # Firefox extension manifest
-├── uploads/               # (not used for media in current state)
-├── index.php              # Main application (requires login)
-├── login.html             # Login page
-├── signup.html            # Signup page
-├── index.html             # Redirect to index.php
+├── home.html              # Landing page (dark theme, animated)
+├── index.html             # Redirects to home.html
+├── index.php              # Main dashboard (requires login)
+├── login.html             # Login page (dark theme)
+├── signup.html            # Signup page (dark theme)
 ├── app.js                 # Main application JavaScript
 ├── auth.js                # Authentication JavaScript
+├── canvas.js              # GoJS canvas logic
 ├── cookies.js             # Cookie consent handling
-├── style.css              # Main application styles
-├── auth.css               # Authentication page styles
+├── style.css              # Main application styles (dark theme)
+├── auth.css               # Authentication page styles (dark theme)
 ├── cookies.css            # Cookie banner styles
+├── logo.png               # Application logo
 ├── config.php             # Database config + security functions
-├── database.sql           # Database schema
+├── database.sql           # Database schema (includes canvas tables)
 ├── setup_database.php     # Database setup helper
 ├── README.md              # This file
 ├── QUICK_START.md         # Implementation reference
@@ -176,6 +197,11 @@ Personal_Web_Tech_Project/
 - `PUT /api/collections.php?id={id}` - Update collection
 - `DELETE /api/collections.php?id={id}` - Delete collection
 
+### Canvas (`api/canvas.php`)
+
+- `GET /api/canvas.php?collectionId={id}` - Get canvas positions and connections for a collection
+- `POST /api/canvas.php` - Save canvas layout (positions and connections)
+
 
 
 ## 🔐 Security Features
@@ -206,11 +232,30 @@ Personal_Web_Tech_Project/
 
 ### Web Application
 
-1. **Login/Signup**: Access via `login.html` or `signup.html`
-2. **Create Bookmarks**: Click "Add Bookmark" button
-3. **Organize**: Create collections and add tags
-4. **Search**: Use the search bar to filter bookmarks
-6. **Manage**: Edit, delete, or favorite bookmarks
+1. **Homepage**: Start at the modern dark-themed landing page (`home.html`)
+2. **Sign Up**: Create an account with username, email, and password
+3. **Login**: Access your dashboard
+4. **Dashboard**: View bookmarks in grid or list mode
+5. **Create Bookmarks**: Click "Add Bookmark" button to save links, text, images, or videos
+6. **Collections**: Organize bookmarks into nested folders
+7. **Canvas Mode**: Switch to visual canvas view within any collection
+   - Drag bookmarks to position them freely
+   - Draw connections between related bookmarks
+   - Click bookmark nodes to preview content
+   - Layout auto-saves as you work
+8. **Search**: Use the search bar to filter bookmarks
+9. **Tags**: Add tags for additional organization
+10. **Logout**: Safely logout and return to homepage
+
+### Canvas Features
+
+- **Access**: Click canvas button when viewing a collection
+- **Drag & Drop**: Click and drag bookmark nodes to reposition
+- **Connections**: Use the link tool to draw arrows between bookmarks
+- **Media Icons**: Visual indicators show bookmark type (🎥 video, 🖼️ image, 📝 text, 🎵 audio, 🔗 link)
+- **Quick Preview**: Click any node to open media preview modal
+- **Zoom & Pan**: Use toolbar controls or mouse wheel
+- **Auto-Save**: Canvas layout persists automatically
 
 ### Browser Extension
 
@@ -226,13 +271,17 @@ Personal_Web_Tech_Project/
 
 ## 🎨 UI Features
 
-- Modern, responsive design
-- Dark/light color scheme
-- Drag-and-drop support
-- Real-time search and filtering
-- Modal dialogs for forms
-- Cookie consent banner
-- Loading states and error handling
+- **Dark Theme**: Consistent #0a0a0a background across all pages
+- **Animated Homepage**: Floating shapes, gradient text, smooth transitions
+- **Responsive Design**: Works seamlessly on desktop and mobile
+- **Custom Logo**: logo.png integrated throughout the interface
+- **Modern Cards**: Elevated surfaces with hover effects
+- **Canvas Visualization**: GoJS-powered infinite canvas
+- **Media Previews**: Inline viewing of images, videos, and text
+- **Real-time Search**: Instant filtering as you type
+- **Modal Dialogs**: Clean forms for bookmarks and collections
+- **Cookie Consent**: GDPR-compliant cookie banner
+- **Loading States**: Visual feedback during operations
 
 ## 📚 Documentation
 
@@ -246,11 +295,13 @@ Personal_Web_Tech_Project/
 
 ### Database Schema
 
-The application uses 4 main tables:
+The application uses 6 main tables:
 - `users` - User accounts
 - `collections` - Bookmark collections/folders
 - `bookmarks` - Bookmark entries
 - `tags` - Bookmark tags
+- `bookmark_canvas_positions` - Canvas node positions
+- `bookmark_canvas_connections` - Canvas node connections
 
 See [database.sql](database.sql) for complete schema.
 
@@ -259,12 +310,14 @@ See [database.sql](database.sql) for complete schema.
 **Backend:**
 - PHP 7.4+
 - MySQL 5.7+
-- Session-based authentication
+- RESTful API with JSON responses
 
 **Frontend:**
 - Vanilla JavaScript (ES6+)
-- CSS3 with custom properties
-- No frameworks/libraries required
+- GoJS 3.0.2 for canvas visualization
+- CSS3 with custom properties (dark theme)
+- PreviewBox for link previews
+- No major frameworks required
 
 **Browser Extensions:**
 - WebExtensions API

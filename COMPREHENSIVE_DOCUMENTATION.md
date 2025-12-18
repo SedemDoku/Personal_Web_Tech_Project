@@ -1,10 +1,10 @@
 # Comprehensive System Documentation
 ## Personal Web Tech Project - Bookmark Manager
 
+**Version:** 2.0 (with Visual Canvas & Dark Theme)  
+**Last Updated:** December 2025
 
 ---
-
-> Important: In the current state, server-side media uploads and downloads are disabled. Media is stored as external URLs (e.g., YouTube links, image URLs) and rendered by the client without passing through a media-serving API. The `/api/media.php` endpoint and local `uploads/media` storage are not used.
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@
 3. [Database Schema](#database-schema)
 4. [Authentication System](#authentication-system)
 5. [API Endpoints](#api-endpoints)
-6. Media Handling System (disabled)
+6. [Canvas System](#canvas-system)
 7. [Frontend Application](#frontend-application)
 8. [Browser Extension](#browser-extension)
 9. [Security Features](#security-features)
@@ -28,24 +28,27 @@
 ## System Overview
 
 ### Purpose
-A comprehensive bookmark management system inspired by Raindrop.io, allowing users to save, organize, and manage various types of content including links, text snippets, images, audio, and video files. The system includes both a web application and a browser extension for seamless bookmarking across the web.
+A modern bookmark management system with visual canvas organization, inspired by Raindrop.io and Raycast. Allows users to save, organize, and visually connect various types of content including links, text snippets, images, audio, and video. Features both a web application and browser extensions for seamless bookmarking.
 
 ### Key Features
+- **Modern Dark Theme**: Consistent design across all pages with animated backgrounds
+- **Visual Canvas Mode**: GoJS-powered infinite canvas for spatial bookmark organization
 - **Multi-User Support**: Secure user authentication with isolated data
-- **Multiple Content Types**: Links, text, images, audio, and video (via external URLs)
-- **Media URLs & Embeds**: Save external media links (YouTube, images) without server-side downloads
+- **Multiple Content Types**: Links, text, images, audio, and video (external URLs)
+- **Media Previews**: Inline viewing of images, videos (YouTube), and text
 - **Collections System**: Hierarchical organization with nested collections
 - **Tagging System**: Flexible tagging for categorization
 - **Search Functionality**: Full-text search across bookmarks
-- **Browser Extension**: Quick save functionality via context menu
-- **Responsive UI**: Modern, clean interface with grid/list views
+- **Browser Extensions**: Quick save functionality via context menu
+- **Responsive UI**: Modern, clean interface with grid/list/canvas views
 
 ### Technology Stack
 - **Backend**: PHP 7.4+ with MySQL
 - **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
+- **Canvas**: GoJS 3.0.2 for visual organization
 - **Database**: MySQL 5.7+ / MariaDB
-- **Extension**: Chrome Extension Manifest V3
-- **Storage**: MySQL for metadata; external URLs for media
+- **Extensions**: Chrome Extension Manifest V3, Firefox WebExtensions
+- **Storage**: MySQL for all data (including canvas positions)
 
 ---
 
@@ -58,14 +61,15 @@ A comprehensive bookmark management system inspired by Raindrop.io, allowing use
 │                     Client Layer                            │
 ├──────────────────────┬──────────────────────────────────────┤
 │  Web Application     │      Browser Extension               │
-│  (index.php)         │      (Chrome Extension)              │
-│  - app.js            │      - popup.js                      │
-│  - style.css         │      - background.js                 │
-│  - auth.js           │      - content.js                    │
+│  - home.html         │      (Chrome Extension)              │
+│  - index.php         │      - popup.js                      │
+│  - app.js            │      - background.js                 │
+│  - canvas.js         │      - content.js                    │
+│  - style.css (dark)  │                                      │
 └──────────┬───────────┴──────────────┬───────────────────────┘
            │                           │
            │  HTTP/HTTPS Requests      │
-           │  (JSON, FormData)         │
+           │  (JSON)                   │
            │                           │
 ┌──────────▼───────────────────────────▼───────────────────────┐
 │                    API Layer                                 │
@@ -73,7 +77,7 @@ A comprehensive bookmark management system inspired by Raindrop.io, allowing use
 │  api/auth.php        - Authentication endpoints              │
 │  api/bookmarks.php   - Bookmark CRUD operations              │
 │  api/collections.php - Collection management                 │
-│  (media endpoint removed)                                    │
+│  api/canvas.php      - Canvas positions & connections        │
 └──────────┬───────────────────────────────────────────────────┘
            │
            │  PDO Prepared Statements
@@ -87,12 +91,8 @@ A comprehensive bookmark management system inspired by Raindrop.io, allowing use
 │  - collections                                               │
 │  - tags                                                      │
 │  - bookmark_tags                                             │
-└──────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────┐
-│                  File Storage Layer                          │
-├──────────────────────────────────────────────────────────────┤
-│  (File storage layer disabled in current state)              │
+│  - bookmark_canvas_positions                                 │
+│  - bookmark_canvas_connections                               │
 └──────────────────────────────────────────────────────────────┘
 ```
 

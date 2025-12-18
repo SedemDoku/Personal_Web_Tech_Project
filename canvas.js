@@ -63,6 +63,10 @@ function initCanvas() {
         cursor: 'pointer',
         dragComputation: function(node, pt, gridpt) {
           return gridpt; // Snap to grid
+        },
+        click: function(e, node) {
+          // Handle click to view media or open link
+          viewBookmark(node.data);
         }
       },
       new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
@@ -76,8 +80,8 @@ function initCanvas() {
           portId: '',
           fromLinkable: true,
           toLinkable: true,
-          minSize: new go.Size(180, 80),
-          maxSize: new go.Size(220, 120)
+          minSize: new go.Size(180, 130),
+          maxSize: new go.Size(220, 180)
         },
         new go.Binding('fill', 'isHighlighted', function(h) { return h ? '#fff3cd' : '#ffffff'; }).ofObject(),
         new go.Binding('stroke', 'color')
@@ -89,6 +93,26 @@ function initCanvas() {
           margin: 12,
           maxSize: new go.Size(200, NaN)
         },
+        
+        // Media preview icon/indicator
+        $(go.TextBlock,
+          {
+            font: '32px sans-serif',
+            margin: new go.Margin(0, 0, 8, 0),
+            alignment: go.Spot.Center,
+            visible: false
+          },
+          new go.Binding('text', 'type', function(type) {
+            if (type === 'image') return '🖼️';
+            if (type === 'video') return '🎥';
+            if (type === 'text') return '📝';
+            if (type === 'audio') return '🎵';
+            return '';
+          }),
+          new go.Binding('visible', 'type', function(type) {
+            return type === 'image' || type === 'video' || type === 'text' || type === 'audio';
+          })
+        ),
         
         // Header with color indicator and title
         $(go.Panel, 'Horizontal',
@@ -134,7 +158,7 @@ function initCanvas() {
         contextMenu:
           $(go.Adornment, 'Vertical',
             $('ContextMenuButton',
-              $(go.TextBlock, 'View Bookmark'),
+              $(go.TextBlock, 'View Media'),
               { click: function(e, obj) { viewBookmark(obj.part.adornedPart.data); } }
             ),
             $('ContextMenuButton',
@@ -572,8 +596,30 @@ function showToast(message, type = 'info') {
 
 // View bookmark in detail (could open modal or navigate to URL)
 function viewBookmark(data) {
-  if (data.bookmark && data.bookmark.url) {
-    window.open(data.bookmark.url, '_blank');
+  if (!data.bookmark) return;
+  
+  const bookmark = data.bookmark;
+  const type = bookmark.type;
+  
+  // For images and videos, open the media preview modal
+  if (type === 'image' || type === 'video') {
+    if (window.openMediaPreviewModal) {
+      window.openMediaPreviewModal(bookmark);
+    } else {
+      // Fallback: open URL directly
+      const url = bookmark.url || bookmark.content;
+      if (url) window.open(url, '_blank');
+    }
+  }
+  // For text bookmarks, open the text preview modal
+  else if (type === 'text') {
+    if (window.openTextPreviewModal) {
+      window.openTextPreviewModal(bookmark);
+    }
+  }
+  // For other types, open the URL
+  else if (bookmark.url) {
+    window.open(bookmark.url, '_blank');
   }
 }
 

@@ -4,9 +4,7 @@ Complete implementation status and quick reference guide for the Personal Web Te
 
 ## 🎯 Project Status: COMPLETE ✅
 
-All core requirements and features have been successfully implemented with full security hardening.
-
-> Note: Server-side media uploads and downloads are disabled. Media is saved as external URLs (e.g., YouTube links, image URLs) and rendered directly by the client. The `api/media.php` endpoint is removed in this state.
+All core requirements, features, and visual enhancements have been successfully implemented with full security hardening and modern dark-themed UI.
 
 ---
 
@@ -14,22 +12,47 @@ All core requirements and features have been successfully implemented with full 
 
 ### ✅ Core Features - COMPLETE
 
+- [x] **Modern Homepage**
+  - Dark-themed landing page (Raycast-inspired)
+  - Animated background with floating shapes
+  - Gradient text effects
+  - Feature showcase with cards
+  - Canvas preview section
+  - Responsive design
+
 - [x] **User Authentication System**
   - Secure signup with password validation
   - Login with session management
-  - Logout functionality
+  - Dark-themed auth pages
+  - Logout redirects to homepage
   - Password hashing (bcrypt)
-  - Session-based authentication
+  - Custom logo.png integration
+
+- [x] **Visual Canvas Mode**
+  - GoJS 3.0.2 integration
+  - Drag and drop bookmark positioning
+  - Draw connections between bookmarks
+  - Media icons on nodes (🎥🖼️📝🎵🔗)
+  - Click nodes to preview content
+  - Auto-save canvas layout
+  - Zoom and pan controls
+  - Collection-specific canvas views
 
 - [x] **Bookmark Management**
   - Create, Read, Update, Delete (CRUD)
   - Multiple bookmark types (link, text, image, audio, video)
+  - Media preview modals
   - Collections/folders with nested support
   - Tags system
   - Search and filter functionality
   - Favorite bookmarks
 
- 
+- [x] **Dark Theme UI**
+  - Consistent color scheme (#0a0a0a background)
+  - Homepage, dashboard, login, signup
+  - Dark forms and inputs
+  - Enhanced shadows for depth
+  - Custom error/success messages
 
 - [x] **Browser Extensions**
   - Chrome extension (Manifest V3)
@@ -81,6 +104,8 @@ All core requirements and features have been successfully implemented with full 
 - [x] Collections table with nested support
 - [x] Bookmarks table with media support
 - [x] Tags table for organization
+- [x] Canvas positions table for spatial layout
+- [x] Canvas connections table for arrows/links
 - [x] Foreign key constraints
 - [x] Proper indexing
 
@@ -91,7 +116,7 @@ All core requirements and features have been successfully implemented with full 
 ### 1. Database Setup (30 seconds)
 
 ```bash
-# Import schema
+# Import schema (includes canvas tables)
 mysql -u your_username -p bookmark_db < database.sql
 ```
 
@@ -111,19 +136,22 @@ define('DB_USER', 'your_username');
 define('DB_PASS', 'your_password');
 ```
 
- 
+### 3. Add Logo (optional)
+
+Place your `logo.png` file in the project root (or use the existing one).
 
 ### 4. Start Server
 
 **XAMPP/WAMP:**
 - Copy to htdocs/www directory
 - Start Apache & MySQL
-- Visit `http://localhost/Personal_Web_Tech_Project/`
+- Visit `http://localhost/Personal_Web_Tech_Project/` (shows homepage)
 
 **PHP Built-in:**
 ```bash
 php -S localhost:8000
 ```
+Visit `http://localhost:8000` (shows homepage)
 
 ### 5. Install Browser Extensions (Optional)
 
@@ -136,6 +164,53 @@ php -S localhost:8000
 1. Go to `about:debugging#/runtime/this-firefox`
 2. Load Temporary Add-on
 3. Select `WebExtensionFirefox/manifest.json`
+
+### 6. First Use
+
+1. Visit homepage (`home.html`)
+2. Click "Sign Up" to create account
+3. Login with your credentials
+4. Click "Go to Dashboard"
+5. Add bookmarks and create collections
+6. Switch to canvas mode to visualize connections!
+
+---
+
+## 🎨 Feature Highlights
+
+### Homepage (`home.html`)
+- Dark theme with animated background
+- Floating gradient shapes
+- Feature showcase cards
+- Canvas preview mockup
+- Call-to-action section
+- Login/Sign Up navigation
+
+### Dashboard (`index.php`)
+- Grid and list views
+- Search and filter
+- Collections sidebar
+- Add bookmark button
+- User menu with logout
+- Canvas mode toggle (per collection)
+
+### Canvas Mode (`canvas.js`)
+- GoJS-powered infinite canvas
+- Drag nodes to position freely
+- Draw arrows between bookmarks
+- Media icons indicate content type
+- Click to preview images/videos/text
+- Auto-save layout to database
+- Zoom, pan, and layout controls
+- Status indicator (Saving/Saved/Error)
+
+### Dark Theme
+- Background: #0a0a0a
+- Surface: #111111 / #1a1a1a
+- Text: #ffffff / #a0a0a0
+- Primary: #ff6b35
+- Borders: #2a2a2a
+- Consistent across all pages
 
 ---
 
@@ -178,19 +253,25 @@ SELECT * FROM collections WHERE user_id = :user_id;
 | `api/auth.php` | Signup, login, logout | Password hashing, validation |
 | `api/bookmarks.php` | Bookmark CRUD | SQL injection prevention |
 | `api/collections.php` | Collection management | User isolation |
+| `api/canvas.php` | Canvas positions & connections | User isolation, JSON handling |
  
 
 ### Frontend (Web App)
 
 | File | Purpose |
 |------|---------|
-| `index.php` | Main app (requires login) |
-| `login.html` | Login page |
-| `signup.html` | Signup page |
+| `home.html` | Landing page (dark theme, animated) |
+| `index.html` | Redirects to home.html |
+| `index.php` | Main dashboard (requires login) |
+| `login.html` | Login page (dark theme) |
+| `signup.html` | Signup page (dark theme) |
 | `auth.js` | Auth logic |
 | `app.js` | Main app logic |
-| `style.css` | Main styles |
+| `canvas.js` | GoJS canvas implementation |
+| `style.css` | Main styles (dark theme) |
+| `auth.css` | Auth page styles (dark theme) |
 | `cookies.js` | Cookie consent |
+| `logo.png` | Application logo |
 
 ### Extensions
 

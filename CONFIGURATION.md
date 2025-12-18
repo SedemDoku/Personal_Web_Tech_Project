@@ -1,6 +1,6 @@
 # Configuration Guide
 
-Complete configuration reference for the Personal Web Tech Bookmark Manager project.
+Complete configuration reference for the Personal Web Tech Bookmark Manager project with dark-themed UI and visual canvas features.
 
 ## 📋 Table of Contents
 
@@ -9,6 +9,8 @@ Complete configuration reference for the Personal Web Tech Bookmark Manager proj
 - [API URL Configuration](#api-url-configuration)
 - [Browser Extension Configuration](#browser-extension-configuration)
 - [Security Configuration](#security-configuration)
+- [Theme Configuration](#theme-configuration)
+- [Canvas Configuration](#canvas-configuration)
 - [Deployment Scenarios](#deployment-scenarios)
 - [Troubleshooting](#troubleshooting)
 
@@ -47,12 +49,14 @@ export DB_PASS=your_password
 
 ### Database Schema
 
-The application uses 4 main tables:
+The application uses 6 main tables:
 
 1. **users** - User accounts and authentication
 2. **collections** - Bookmark collections/folders with nested support
 3. **bookmarks** - Bookmark entries with media support
 4. **tags** - Bookmark tagging system
+5. **bookmark_canvas_positions** - Canvas node positions (x, y coordinates)
+6. **bookmark_canvas_connections** - Canvas node connections (arrows/links)
 
 Import using: `mysql -u username -p bookmark_db < database.sql`
 
@@ -200,7 +204,114 @@ Configured in `api/auth.php`:
 
 ---
 
-> Note: Server-side media uploads and downloads are disabled. Media is stored as external URLs (e.g., YouTube links, image URLs) and rendered directly by the client. The `api/media.php` endpoint is removed in this state.
+## Theme Configuration
+
+### Color Scheme
+
+The application uses a consistent dark theme defined via CSS custom properties:
+
+```css
+:root {
+    --primary: #ff6b35;
+    --primary-hover: #e55a2b;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --orange: #f97316;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --green: #22c55e;
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface-elevated: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+}
+```
+
+These variables are used in:
+- `style.css` - Main dashboard
+- `auth.css` - Login/signup pages
+- `home.html` - Inline styles in homepage
+
+### Logo Configuration
+
+Replace `logo.png` in the project root to customize branding. The logo appears in:
+- Homepage navigation
+- Dashboard header
+- Login/signup pages
+- Footer
+
+Recommended dimensions: Height 22-32px, transparent background PNG
+
+---
+
+## Canvas Configuration
+
+### GoJS Integration
+
+The canvas feature uses GoJS 3.0.2 loaded from CDN:
+
+```html
+<script src="https://unpkg.com/gojs@3.0.2/release/go.js"></script>
+```
+
+### Canvas Settings
+
+Default configuration in `canvas.js`:
+
+```javascript
+// Layout settings
+diagram.layout = $(go.GridLayout, {
+    wrappingWidth: Infinity,
+    spacing: new go.Size(50, 50)
+});
+
+// Node template with media icons
+mediaIconText: (data) => {
+    if (data.type === 'video') return '🎥';
+    if (data.type === 'image') return '🖼️';
+    if (data.type === 'text') return '📝';
+    if (data.type === 'audio') return '🎵';
+    return '🔗';
+}
+```
+
+### Canvas Database Tables
+
+**bookmark_canvas_positions:**
+```sql
+CREATE TABLE bookmark_canvas_positions (
+    bookmark_id INT PRIMARY KEY,
+    collection_id INT NOT NULL,
+    x_position FLOAT NOT NULL,
+    y_position FLOAT NOT NULL,
+    FOREIGN KEY (bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE,
+    FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE CASCADE
+);
+```
+
+**bookmark_canvas_connections:**
+```sql
+CREATE TABLE bookmark_canvas_connections (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    from_bookmark_id INT NOT NULL,
+    to_bookmark_id INT NOT NULL,
+    collection_id INT NOT NULL,
+    label VARCHAR(255),
+    FOREIGN KEY (from_bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE,
+    FOREIGN KEY (to_bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE
+);
+```
+
+### Customizing Canvas Behavior
+
+Edit `canvas.js` to modify:
+- Node appearance and size
+- Connection line styling
+- Layout algorithms
+- Auto-save debounce timing (currently 1 second)
+- Toolbar button actions
 
 ---
 

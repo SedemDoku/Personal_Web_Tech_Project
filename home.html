@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - Your Visual Memory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --primary-hover: #e55a2b;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --orange: #f97316;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --green: #22c55e;
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface-elevated: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: var(--purple);
+            top: -200px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 50%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: var(--pink);
+            bottom: -100px;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        h1 {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+            letter-spacing: -0.03em;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--purple), var(--pink), var(--orange));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 24px);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 3D Card Grid */
+        .card-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 0 20px;
+            animation: fadeIn 1s ease-out 0.8s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .showcase-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(255, 107, 53, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .showcase-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .showcase-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon.video {
+            background: linear-gradient(135deg, var(--orange), #ef4444);
+        }
+
+        .card-icon.image {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+        }
+
+        .card-icon.link {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--primary), var(--purple), var(--pink));
+            border-radius: 24px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s;
+        }
+
+        .feature-item:hover::after {
+            opacity: 0.3;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .feature-item:nth-child(1) .feature-icon {
+            background: linear-gradient(135deg, var(--blue), #2563eb);
+        }
+
+        .feature-item:nth-child(2) .feature-icon {
+            background: linear-gradient(135deg, var(--purple), #7c3aed);
+        }
+
+        .feature-item:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, var(--pink), #db2777);
+        }
+
+        .feature-item:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, var(--orange), #ea580c);
+        }
+
+        .feature-item:nth-child(5) .feature-icon {
+            background: linear-gradient(135deg, var(--green), #16a34a);
+        }
+
+        .feature-item:nth-child(6) .feature-icon {
+            background: linear-gradient(135deg, var(--cyan), #0891b2);
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Canvas Preview */
+        .canvas-preview {
+            padding: 120px 20px;
+            background: var(--surface);
+            position: relative;
+        }
+
+        .preview-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .canvas-visual {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .canvas-node {
+            position: absolute;
+            background: var(--surface-elevated);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 28px;
+            font-weight: 600;
+            animation: floatNode 4s ease-in-out infinite;
+        }
+
+        @keyframes floatNode {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .node-1 {
+            top: 60px;
+            left: 60px;
+            animation-delay: 0s;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.05));
+            border-color: var(--primary);
+        }
+
+        .node-2 {
+            top: 140px;
+            right: 80px;
+            animation-delay: 1s;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
+            border-color: var(--purple);
+        }
+
+        .node-3 {
+            bottom: 80px;
+            left: 120px;
+            animation-delay: 2s;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+            border-color: var(--green);
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            transform-origin: left center;
+            opacity: 0.5;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--primary);
+            border-radius: 32px;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-box h2 {
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .cta-box p {
+            position: relative;
+            z-index: 1;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--bg);
+            padding: 16px 40px;
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--text);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .card-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .canvas-visual {
+                order: -1;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <img src="logo.png" alt="Bookmarks Logo" style="height: 32px; width: auto;">
+            <span>Bookmarks</span>
+        </div>
+        <div class="nav-links">
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            <span>Visual Knowledge Management</span>
+        </div>
+        <h1>
+            Your digital memory,<br>
+            <span class="gradient-text">reimagined</span>
+        </h1>
+        <p class="hero-subtitle">
+            Save, connect, and visualize everything that matters. Build your personal knowledge graph with an interface that thinks the way you do.
+        </p>
+        <div class="hero-cta">
+            <a href="index.php" class="btn btn-primary">Go to Dashboard</a>
+            <a href="login.html" class="btn" style="background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border);">Login</a>
+        </div>
+
+        <div class="card-showcase">
+            <div class="showcase-card">
+                <div class="card-icon video">🎥</div>
+                <h3 class="card-title">Video Library</h3>
+                <p class="card-desc">Save and organize video content with automatic thumbnails and playback</p>
+            </div>
+            <div class="showcase-card">
+                <div class="card-icon image">🖼️</div>
+                <h3 class="card-title">Image Collections</h3>
+                <p class="card-desc">Beautiful grid layouts for your visual inspirations and references</p>
+            </div>
+            <div class="showcase-card">
+                <div class="card-icon link">🔗</div>
+                <h3 class="card-title">Smart Links</h3>
+                <p class="card-desc">Rich previews with metadata extraction and automatic categorization</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="section-header">
+            <div class="section-tag">Features</div>
+            <h2>Built for how you think</h2>
+            <p class="hero-subtitle" style="animation: none;">Everything you need to organize your digital life in one powerful platform</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🎯</div>
+                <h3>Infinite Canvas</h3>
+                <p class="feature-text">Arrange bookmarks freely in 2D space. Create visual mind maps and connect related ideas with arrows.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Search</h3>
+                <p class="feature-text">Find anything instantly with full-text search, smart filters, and keyboard shortcuts.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🎨</div>
+                <h3>Visual First</h3>
+                <p class="feature-text">Rich previews for every type of content. See images, videos, and websites at a glance.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📁</div>
+                <h3>Smart Collections</h3>
+                <p class="feature-text">Organize with nested folders, tags, and auto-categorization powered by AI.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <h3>Real-time Sync</h3>
+                <p class="feature-text">Access your bookmarks anywhere. Changes sync instantly across all your devices.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🤝</div>
+                <h3>Collaboration</h3>
+                <p class="feature-text">Share collections with your team. Comment, annotate, and build knowledge together.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="canvas-preview">
+        <div class="preview-container">
+            <div class="canvas-visual">
+                <div class="canvas-node node-1">Research 📚</div>
+                <div class="canvas-node node-2">Design 🎨</div>
+                <div class="canvas-node node-3">Development 💻</div>
+            </div>
+            <div>
+                <div class="section-tag">Canvas Mode</div>
+                <h2>Think spatially</h2>
+                <p class="hero-subtitle" style="text-align: left; animation: none; margin-left: 0;">
+                    Break free from lists and folders. Position bookmarks anywhere on an infinite canvas, draw connections, and create visual stories with your content.
+                </p>
+                <ul style="margin-top: 32px; list-style: none;">
+                    <li style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--text-muted);">
+                        <span style="color: var(--green); font-size: 20px;">✓</span> Drag and drop positioning
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--text-muted);">
+                        <span style="color: var(--green); font-size: 20px;">✓</span> Connect related bookmarks
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
+                        <span style="color: var(--green); font-size: 20px;">✓</span> Zoom and pan smoothly
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Ready to transform your bookmarks?</h2>
+            <p>Join thousands already organizing their digital lives visually</p>
+            <a href="signup.html" class="btn btn-white">Get Started — It's Free</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">
+            <img src="logo.png" alt="Bookmarks" style="height: 24px; width: auto; vertical-align: middle; margin-right: 8px;">
+            Bookmarks
+        </div>
+        <div class="footer-links">
+            <a href="login.html" class="footer-link">Login</a>
+            <a href="signup.html" class="footer-link">Sign Up</a>
+        </div>
+        <p class="copyright">© 2024 Bookmarks. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Parallax scroll effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, i) => {
+                shape.style.transform = `translateY(${scrolled * (0.1 + i * 0.05)}px)`;
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-item, .showcase-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

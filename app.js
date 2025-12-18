@@ -310,12 +310,12 @@ function wireEvents() {
       const data = await response.json();
       console.log('Logout data:', data);
       clearStoredUser();
-      // Redirect to login page with a flag to prevent auto-login
-      window.location.href = 'login.html?action=logout';
+      // Redirect to home page
+      window.location.href = 'home.html';
     } catch (error) {
       console.error("Logout error:", error);
       clearStoredUser();
-      window.location.href = 'login.html?action=logout';
+      window.location.href = 'home.html';
     }
   });
 
@@ -975,3 +975,7 @@ async function createBookmark(bookmark) {
     alert('Failed to create bookmark');
   }
 }
+
+// Expose modal functions globally for canvas.js to use
+window.openMediaPreviewModal = openMediaPreviewModal;
+window.openTextPreviewModal = openTextPreviewModal;
