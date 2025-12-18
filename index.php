@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Multi-Media Bookmarks</title>
+    <title>BookIt - Your Visual Memory</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="cookies.css">
     <!-- PreviewBox link previews -->
@@ -16,8 +16,8 @@
 
     <header class="header">
         <div class="brand">
-            <img src="logo.png" alt="Bookmarks Logo" class="brand-icon" style="height: 22px; width: auto;">
-            <h1>Bookmarks</h1>
+            <img src="logo.png" alt="BookIt Logo" class="brand-icon" style="height: 22px; width: auto;">
+            <h1>BookIt</h1>
         </div>
         <div class="header-actions">
             <div class="search-wrapper">

@@ -61,7 +61,7 @@ function handleSignup() {
     $password = $data['password'] ?? '';
     $confirmPassword = $data['confirmPassword'] ?? '';
     
-    // Validation
+    // Signup Validation
     if (empty($username) || empty($email) || empty($password)) {
         jsonError('All fields are required');
     }

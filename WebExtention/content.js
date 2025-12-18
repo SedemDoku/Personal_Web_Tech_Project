@@ -28,7 +28,7 @@ async function loadCollections() {
     const result = await chrome.storage.local.get(['apiUrl', 'user_id', 'user_email']);
     
     // Default apiUrl if not in storage
-    const apiUrl = result.apiUrl || 'http://localhost/Personal_Web_Tech_Project/api';
+    const apiUrl = result.apiUrl || 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/api';
     
     if (!result.user_id || !result.user_email) {
       console.log('No user logged in');

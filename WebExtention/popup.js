@@ -1,6 +1,6 @@
 // Extension popup - handles login and bookmark display
 // API_BASE will be loaded from storage or use default
-const DEFAULT_API_BASE = 'http://localhost/Personal_Web_Tech_Project/api';
+const DEFAULT_API_BASE = 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/api';
 
 let currentUser = null;
 let bookmarks = [];
@@ -52,7 +52,7 @@ function wireEvents() {
   
   signupLink?.addEventListener('click', (e) => {
     e.preventDefault();
-    chrome.tabs.create({ url: 'http://localhost/Personal_Web_Tech_Project/signup.html' });
+    chrome.tabs.create({ url: 'http://169.239.251.102:341/~sedem.doku/Personal_Web_Tech_Project/signup.html' });
   });
 }
 
